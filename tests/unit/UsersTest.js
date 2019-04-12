@@ -35,29 +35,17 @@ describe('Users', () => {
   });
 
   describe('findAll()', () => {
-    it('returns all the results', async () => {
+    it('returns all the results for the given query', async () => {
       const expectedOutput = [
-        {
-          id: 1,
-          first_name: 'Meat',
-          last_name: 'Ball',
-          email: 'meatball@meat.com',
-        },
         {
           id: 2,
           first_name: 'Big',
           last_name: 'Fetus',
           email: 'bigfetus@meat.com',
         },
-        {
-          id: 3,
-          first_name: 'Band',
-          last_name: 'Aid',
-          email: 'bandaid@meat.com',
-        },
       ];
 
-      const output = await user.findAll();
+      const output = await user.findAll({ id: 2 });
 
       expect(output).to.deep.equal(expectedOutput);
     });

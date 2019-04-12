@@ -1,9 +1,12 @@
 /* global describe it xit expect beforeEach afterEach context */
 const db = require('../../lib/Connection');
+const queryBuilder = require('../../lib/QueryBuilder');
+
 const User = require('../../lib/Users');
 
 const user = new User();
 user.setConnection(db);
+user.setQueryBuilder(queryBuilder);
 
 describe('Users', () => {
   beforeEach((done) => {

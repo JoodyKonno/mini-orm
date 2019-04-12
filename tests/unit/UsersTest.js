@@ -11,10 +11,41 @@ user.setQueryBuilder(queryBuilder);
 describe('Users', () => {
   beforeEach((done) => {
     db.run(`
-      INSERT INTO users (first_name, last_name, email)
-      VALUES ('Meat', 'Ball', 'meatball@meat.com'),
-      ('Big', 'Fetus', 'bigfetus@meat.com'),
-      ('Band', 'Aid', 'bandaid@meat.com')`, () => {
+      CREATE TABLE IF NOT EXISTS users(
+        id INTEGER PRIMARY KEY,
+        group_id INTEGER,
+        first_name TEXT,
+        last_name TEXT,
+        email TEXT
+      )`, () => {
+      done();
+    });
+  });
+
+  beforeEach((done) => {
+    db.run(`
+      CREATE TABLE IF NOT EXISTS groups(
+        id INTEGER PRIMARY KEY,
+        first_name TEXT
+      )`, () => {
+      done();
+    });
+  });
+
+  beforeEach((done) => {
+    db.run(`
+      INSERT INTO groups (name)
+      VALUES ('Super Meat Boy'),`, () => {
+      done();
+    });
+  });
+
+  beforeEach((done) => {
+    db.run(`
+      INSERT INTO users (group_id, first_name, last_name, email)
+      VALUES (1, 'Meat', 'Ball', 'meatball@meat.com'),
+      (1, 'Big', 'Fetus', 'bigfetus@meat.com'),
+      (1, 'Band', 'Aid', 'bandaid@meat.com')`, () => {
       done();
     });
   });
@@ -29,9 +60,14 @@ describe('Users', () => {
     });
   });
 
-  // xit for ignore tests for now
-  xit('is an ActiveOrm class', () => {
-
+  afterEach((done) => {
+    db.serialize(() => {
+      db.run(`
+        DELETE FROM groups 
+      `, () => {
+        done();
+      });
+    });
   });
 
   describe('findAll()', () => {
@@ -39,6 +75,7 @@ describe('Users', () => {
       const expectedOutput = [
         {
           id: 2,
+          group_id: 1,
           first_name: 'Big',
           last_name: 'Fetus',
           email: 'bigfetus@meat.com',
@@ -55,6 +92,7 @@ describe('Users', () => {
     it('returns a single result', async () => {
       const expectedOutput = {
         id: 2,
+        group_id: 1,
         first_name: 'Big',
         last_name: 'Fetus',
         email: 'bigfetus@meat.com',

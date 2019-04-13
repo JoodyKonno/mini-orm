@@ -11,6 +11,18 @@ user.setQueryBuilder(queryBuilder);
 describe('Users', () => {
   beforeEach((done) => {
     db.run(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        first_name TEXT,
+        last_name TEXT,
+        email TEXT
+      )`, () => {
+      done();
+    });
+  });
+
+  beforeEach((done) => {
+    db.run(`
       INSERT INTO users (first_name, last_name, email)
       VALUES ('Meat', 'Ball', 'meatball@meat.com'),
       ('Big', 'Fetus', 'bigfetus@meat.com'),

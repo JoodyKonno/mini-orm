@@ -1,27 +1,8 @@
-const sqlite3 = require('sqlite3').verbose();
+const db = require('./lib/Connection');
+const Users = require('./lib/Users');
 
-let db = new sqlite3.Database('users', sqlite3.OPEN_READWRITE, (err) => {
-  if (err) {
-    console.error(err.message);
-  }
-  console.log('Connected to the in-memory SQlite database.');
-});
+const user = new Users();
 
-db.serialize(() => {
-  const users = db.get(`
-    SELECT * FROM users
-  `, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
+user.setAttribute('first_name', 'Meat Ball');
 
-    console.log(rows);
-  });
-});
-
-db.close((err) => {
-  if (err) {
-    console.error(err.message);
-  }
-  console.log('Close the database connection.');
-});
+console.log(user.first_name);

@@ -1,4 +1,4 @@
-/* global describe it xit expect beforeEach afterEach context */
+/* global describe it xit expect before beforeEach after afterEach context */
 const db = require('../../lib/Connection');
 const queryBuilder = require('../../lib/QueryBuilder');
 
@@ -113,6 +113,40 @@ describe('Users', () => {
       xit('returns empty', () => {
 
       });
+    });
+  });
+
+  describe('save()', () => {
+    before(() => {
+      user
+        .setAttribute('group_id', 2)
+        .setAttribute('first_name', 'Might')
+        .setAttribute('last_name', 'Saw')
+        .setAttribute('email', 'mightsaw@meat.com');
+    });
+
+    after((done) => {
+      db.serialize(() => {
+        db.run(`
+          DELETE FROM users
+          WHERE id = 4
+        `, () => {
+          done();
+        });
+      });
+    });
+
+    it('saves a new user', async () => {
+      const output = await user.save();
+      const expectedOutput = {
+        id: 4,
+        group_id: 2,
+        first_name: 'Might',
+        last_name: 'Saw',
+        email: 'mightsaw@meat.com',
+      };
+
+      expect(output).to.deep.equals(expectedOutput);
     });
   });
 });

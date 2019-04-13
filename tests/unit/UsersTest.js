@@ -34,7 +34,7 @@ describe('Users', () => {
   afterEach((done) => {
     db.serialize(() => {
       db.run(`
-        DELETE FROM users 
+        DELETE FROM users
       `, () => {
         done();
       });

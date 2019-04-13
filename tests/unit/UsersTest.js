@@ -11,8 +11,19 @@ user.setQueryBuilder(queryBuilder);
 describe('Users', () => {
   beforeEach((done) => {
     db.run(`
-      CREATE TABLE IF NOT EXISTS users (
+      CREATE TABLE groups (
         id INTEGER PRIMARY KEY,
+        name TEXT
+      )`, () => {
+      done();
+    });
+  });
+
+  beforeEach((done) => {
+    db.run(`
+      CREATE TABLE users (
+        id INTEGER PRIMARY KEY,
+        group_id INTEGER,
         first_name TEXT,
         last_name TEXT,
         email TEXT
@@ -23,10 +34,19 @@ describe('Users', () => {
 
   beforeEach((done) => {
     db.run(`
-      INSERT INTO users (first_name, last_name, email)
-      VALUES ('Meat', 'Ball', 'meatball@meat.com'),
-      ('Big', 'Fetus', 'bigfetus@meat.com'),
-      ('Band', 'Aid', 'bandaid@meat.com')`, () => {
+      INSERT INTO groups (name)
+      VALUES ('Binding of Isaac'),
+      ('Super Meat Boy')`, () => {
+      done();
+    });
+  });
+
+  beforeEach((done) => {
+    db.run(`
+      INSERT INTO users (group_id, first_name, last_name, email)
+      VALUES (2, 'Meat', 'Ball', 'meatball@meat.com'),
+      (2, 'Big', 'Fetus', 'bigfetus@meat.com'),
+      (2, 'Band', 'Aid', 'bandaid@meat.com')`, () => {
       done();
     });
   });
@@ -34,7 +54,17 @@ describe('Users', () => {
   afterEach((done) => {
     db.serialize(() => {
       db.run(`
-        DELETE FROM users
+        DROP TABLE users
+      `, () => {
+        done();
+      });
+    });
+  });
+
+  afterEach((done) => {
+    db.serialize(() => {
+      db.run(`
+        DROP TABLE groups
       `, () => {
         done();
       });
@@ -51,6 +81,7 @@ describe('Users', () => {
       const expectedOutput = [
         {
           id: 2,
+          group_id: 2,
           first_name: 'Big',
           last_name: 'Fetus',
           email: 'bigfetus@meat.com',
@@ -67,6 +98,7 @@ describe('Users', () => {
     it('returns a single result', async () => {
       const expectedOutput = {
         id: 2,
+        group_id: 2,
         first_name: 'Big',
         last_name: 'Fetus',
         email: 'bigfetus@meat.com',
